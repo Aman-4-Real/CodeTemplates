@@ -1,2 +1,2 @@
 # CodeTemplates
-Useful code templates for *.
+Useful code templates. W.I.P.
