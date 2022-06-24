@@ -3,11 +3,24 @@ Author: Aman
 Date: 2022-06-21 21:37:41
 Contact: cq335955781@gmail.com
 LastEditors: Aman
-LastEditTime: 2022-06-21 22:09:35
+LastEditTime: 2022-06-24 14:15:32
 '''
 
 import multiprocessing
 from itertools import product
+import datetime
+# import requests
+
+
+
+# def download(file_path, picture_url):
+#     headers = {
+#         "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 			(KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36 QIHU 360SE",
+#     }
+#     r = requests.get(picture_url, headers=headers, timeout=5)
+#     with open(file_path, 'wb') as f:
+#         f.write(r.content)
+
 
 
 class MyMultiProcess(object):
@@ -65,12 +78,19 @@ def MyFunction(param):
 
 
 def main():
+    start_time = datetime.datetime.now()
+    print("Start time:", start_time)
 
     workers_num = 16  # num of multiprocers
     text_file = [""]
 
     mapper = MyMultiProcess(MyFunction, workers_num)
     res = mapper(inputs=[text_file])
+
+    end_time = datetime.datetime.now()
+    print("End time:", end_time)
+    print("Total time:", end_time - start_time)
+
 
 if __name__ == '__main__' :
     main()
