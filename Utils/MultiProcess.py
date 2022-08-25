@@ -9,6 +9,7 @@ LastEditTime: 2022-06-24 14:15:32
 import multiprocessing
 from itertools import product
 import datetime
+import pickle
 # import requests
 
 
@@ -56,7 +57,8 @@ class MyMultiProcess(object):
             print("Error! No input files!")
             exit(1)
 
-        # split inputs into chunks
+        ##################################################
+        # spilt into multiple chunks if necessary
         size_of_chunk = 0
         out_path = "./"
         if len(inputs) == 1:
@@ -65,14 +67,37 @@ class MyMultiProcess(object):
             file_list = inputs
 
         param = list(product(file_list, [size_of_chunk]))
-        res = self.pool.map(self.my_func, param)
+        ##################################################
+
+
+        ##################################################
+        # if do not split into files, distribute to different process
+        size = len(inputs)//self.num_workers
+		starts = [i*size for i in range(self.num_workers)]
+		param = [(inputs, size, self.num_workers, ) + (start,) for start in starts]
+        ##################################################
+
+		res = self.pool.map(self.my_func, param)
+
 
         return res
 
 
-def MyFunction(param):
-    # define your function here
+def process_data(process_name, data):
+    # define your process data code here
     pass
+
+
+
+
+def MyFunction(param):
+    data, size, num_workers, start = params
+    print(multiprocessing.current_process().name, 'data processing...')
+    
+    res = process_data(multiprocessing.current_process().name, data[start:end])
+
+    print(multiprocessing.current_process().name, \
+		'data processing done. Success: %d/%d' % (len(res), end - start))
     
     return
 
@@ -86,6 +111,14 @@ def main():
 
     mapper = MyMultiProcess(MyFunction, workers_num)
     res = mapper(inputs=[text_file])
+
+    # aggregate and save
+    print("Aggregating and saving...")
+    res = [item for sublist in res for item in sublist]
+    print("Total res:", len(res))
+    save_path = ""
+    pickle.dump(res, open(save_path, "wb"))
+    print("Aggregating and saving done. File saved to %s." % save_path)
 
     end_time = datetime.datetime.now()
     print("End time:", end_time)
