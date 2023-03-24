@@ -90,7 +90,7 @@ def process_data(process_name, data):
 
 
 
-def MyFunction(param):
+def MyFunction(params):
     data, size, num_workers, start = params
     print(multiprocessing.current_process().name, 'data processing...')
     
